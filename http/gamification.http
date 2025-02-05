@@ -1,5 +1,5 @@
 ### earn points
-GET http://localhost:8080/points/earn?sessionId=2345-6789-1234&amount=100
+POST http://localhost:8080/points/earn?sessionId=2345-6789-1234&amount=100
 
 ### start game session
 POST http://localhost:8080/games/start?sessionId=4567-6789-1234
