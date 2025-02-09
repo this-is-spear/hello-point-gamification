@@ -1,6 +1,6 @@
 package tis.service.event
 
-data class EarnPointEvent(
+data class EggBroken(
     val sessionId: String,
-    val amount: Int,
+    val earnedPoints: Int,
 )

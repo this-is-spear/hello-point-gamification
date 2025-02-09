@@ -1,30 +1,36 @@
 package tis.ui
 
+import java.util.concurrent.CompletableFuture
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import tis.service.GameService
-import tis.service.query.GameSessionView
-import java.util.concurrent.CompletableFuture
+import tis.service.EggService
+import tis.service.GameSessionService
+import tis.service.dto.MyGameSessionIdResponse
 
 @RestController
-@RequestMapping("/games")
+@RequestMapping("/api")
 class GameController(
-    private val gameService: GameService,
+    private val gameSessionService: GameSessionService,
+    private val eggService: EggService,
 ) {
-    @PostMapping("/start")
-    fun start(
+    @PostMapping("/games")
+    fun startGame(): CompletableFuture<MyGameSessionIdResponse> = gameSessionService.createGameSession()
+
+    @GetMapping("/games")
+    fun getGame(
         @RequestParam sessionId: String,
-    ): CompletableFuture<String> = gameService.start(sessionId)
+    ) = gameSessionService.getGameSession(sessionId)
 
-    @GetMapping("/all")
-    fun findAll(): CompletableFuture<List<GameSessionView>> = gameService.findAll()
+    @PostMapping("/eggs/acquire")
+    fun acquireEggs(
+        @RequestParam sessionId: String,
+    ) = eggService.acquireEgg(sessionId)
 
-    @GetMapping("/{sessionId}")
-    fun findOne(
-        @PathVariable sessionId: String,
-    ): CompletableFuture<GameSessionView> = gameService.findOne(sessionId)
+    @PostMapping("/eggs/break")
+    fun breakEgg(
+        @RequestParam sessionId: String,
+    ) = eggService.breakEgg(sessionId)
 }

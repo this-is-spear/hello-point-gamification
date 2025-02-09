@@ -2,8 +2,8 @@ package tis.core
 
 import org.axonframework.modelling.command.TargetAggregateIdentifier
 
-data class EarnPointCommand(
+data class AcquireEggCommand(
     @TargetAggregateIdentifier
-    val sessionId : String,
-    val amount: Int,
+    val sessionId: String,
+    val acquireEggs: Int,
 )

@@ -1,5 +1,5 @@
 package tis.core
 
-data class FindOneGameSessionsQuery(
+data class FindOneGameQuery(
     val sessionId: String,
 )

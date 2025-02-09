@@ -2,49 +2,53 @@ package tis.service.query
 
 import org.axonframework.eventhandling.EventHandler
 import org.axonframework.queryhandling.QueryHandler
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
-import tis.core.FindAllGameSessionsQuery
-import tis.core.FindOneGameSessionsQuery
-import tis.core.StartGameSessionCommand
-import tis.service.command.GameSession
-import tis.service.event.EarnPointEvent
+import tis.core.FindOneGameQuery
+import tis.service.event.EggsAcquired
+import tis.service.event.EggBroken
+import tis.service.event.GameSessionStarted
 
 @Repository
-class GameSessionProjection {
-    private val gameSessions = mutableMapOf<String, GameSession>()
+class GameSessionProjection(
+    private val sessionMap: MutableMap<String, GameSessionView> = mutableMapOf(),
+) {
+    private val log: Logger = LoggerFactory.getLogger(GameSessionProjection::class.java)
 
     @EventHandler
-    fun on(event: StartGameSessionCommand) {
-        gameSessions.getOrPut(event.sessionId) { GameSession() }.apply {
-            sessionId = event.sessionId
-        }
+    fun on(gameSessionStarted: GameSessionStarted) {
+        log.info("Creating session with id: ${gameSessionStarted.sessionId}")
+        sessionMap[gameSessionStarted.sessionId] = GameSessionView(gameSessionStarted.sessionId, 0, 0)
     }
 
-    /**
-     * 한 번 포인트를 먼저 적립했더니 gameSessions[sessionId] 값을 조회해서 바로 넣질 못한다...
-     * 존재하는지 확인하고 없다면 새로 생성해야 하는 기이한 현상을 유지해야 한다.
-     * 이런 경우 이벤트를 삭제해야하는걸까?
-     */
     @EventHandler
-    fun on(event: EarnPointEvent) {
-        gameSessions.getOrPut(event.sessionId) { GameSession() }.apply {
-            sessionId = event.sessionId
-            points += event.amount
-        }
+    fun on(event: EggBroken) {
+        log.info("Breaking egg in session with id: ${event.sessionId}")
+        val gameSession = sessionMap[event.sessionId] ?: throw IllegalArgumentException("Session not found")
+        val updatedGameSession = GameSessionView(
+            sessionId = event.sessionId,
+            availableEggs = gameSession.availableEggs - 1,
+            availablePoints = gameSession.availablePoints + event.earnedPoints
+        )
+        sessionMap[event.sessionId] = updatedGameSession
+    }
+
+    @EventHandler
+    fun on(event: EggsAcquired) {
+        log.info("Acquiring egg in session with id: ${event.sessionId}")
+        val gameSession = sessionMap[event.sessionId] ?: throw IllegalArgumentException("Session not found")
+        val updatedGameSession = GameSessionView(
+            sessionId = event.sessionId,
+            availableEggs = gameSession.availableEggs + event.acquireEggs,
+            availablePoints = gameSession.availablePoints
+        )
+        sessionMap[event.sessionId] = updatedGameSession
     }
 
     @QueryHandler
-    fun handle(query: FindAllGameSessionsQuery): List<GameSessionView> {
-        return gameSessions.values.map {
-            GameSessionView(it.sessionId, it.points)
-        }.toList()
-    }
-
-    @QueryHandler
-    fun handle(query: FindOneGameSessionsQuery): GameSessionView {
-        val gameSession = gameSessions[query.sessionId] ?: throw IllegalArgumentException("Game session not found")
-        return gameSession.let {
-            GameSessionView(it.sessionId, it.points)
-        }
+    fun getSession(query: FindOneGameQuery): GameSessionView {
+        log.info("Getting session with id: ${query.sessionId}")
+        return sessionMap[query.sessionId] ?: throw IllegalArgumentException("Session not found")
     }
 }
