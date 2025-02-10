@@ -4,6 +4,7 @@ import {GameSessionResponse} from './api_get_my_game_session.js';
 import {AddEggResponse} from "./api_add_egg.js";
 import {BreakEggResponse} from "./api_break_egg.js";
 import {StartGameSessionResponse} from "./api_start_game_session.js";
+import {MissionUI} from "./mission_ui.js";
 
 class GameController {
     constructor() {
@@ -93,5 +94,6 @@ class GameController {
 }
 
 window.onload = () => {
+    new MissionUI();
     new GameController();
 };

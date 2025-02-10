@@ -31,7 +31,7 @@ export class Egg {
 
     createElements() {
         this.element = document.createElement('div');
-        this.element.className = 'pet';
+        this.element.className = 'egg';
         this.updateEggSVG();
         this.updatePosition();
         document.body.appendChild(this.element);
