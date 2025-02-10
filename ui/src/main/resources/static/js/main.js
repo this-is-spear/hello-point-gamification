@@ -1,8 +1,8 @@
 import {Game} from './game.js';
 import {Egg} from './egg.js';
-import {GameSessionResponse} from './api-get-my-game-session.js';
-import {AddEggResponse} from "./api-add-egg.js";
-import {BreakEggResponse} from "./api-break-egg.js";
+import {GameSessionResponse} from './api_get_my_game_session.js';
+import {AddEggResponse} from "./api_add_egg.js";
+import {BreakEggResponse} from "./api_break_egg.js";
 import {StartGameSessionResponse} from "./api_start_game_session.js";
 
 class GameController {
