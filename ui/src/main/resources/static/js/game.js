@@ -1,4 +1,4 @@
-import {GameSessionResponse} from './api_get_my_game_session.js';
+import {GameSessionResponse} from './api_game_session_get.js';
 
 export class Game {
     constructor(sessionId) {
