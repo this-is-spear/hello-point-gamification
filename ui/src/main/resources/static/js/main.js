@@ -1,62 +1,50 @@
-import {Game} from './game.js';
-import {Egg} from './egg.js';
-import {GameSessionResponse} from './api_game_session_get.js';
-import {AddEggResponse} from "./api_egg_add.js";
-import {BreakEggResponse} from "./api_egg_break.js";
-import {StartGameSessionResponse} from "./api_game_session_start.js";
-import {MissionUI} from "./mission_ui.js";
+import { Game } from './game.js';
+import { GameSessionResponse } from './api_game_session_get.js';
+import { BreakEggResponse } from "./api_egg_break.js";
+import { StartGameSessionResponse } from "./api_game_session_start.js";
+import { MissionUI } from "./mission_ui.js";
+import { EggManager } from './egg_manager.js';
 
 class GameController {
     constructor() {
-        this.eggs = new Map();
-        this.nextId = 1;
-        this.sessionId = null
-        this.initializeGame();
+        this.sessionId = null;
+        this.initialize();
     }
 
-    async initializeGame() {
-        await this.initializeSession()
+    async initialize() {
+        await this.initializeSession();
         this.game = new Game(this.sessionId);
+
+        this.eggManager = new EggManager(
+            this.sessionId,
+            this.handleEggBreak.bind(this),
+            this.handleEggRemove.bind(this)
+        );
+
+        new MissionUI(this.sessionId, this.eggManager);
         await this.setupEventListeners();
         await this.initializeEggs();
     }
 
     async initializeSession() {
         let startGameSession = await StartGameSessionResponse.fetchStartGameSession();
-        this.sessionId = startGameSession.sessionId
+        this.sessionId = startGameSession.sessionId;
     }
 
     setupEventListeners() {
-        this.game.on('add', () => this.addEgg());
+        this.game.on('add', () => this.eggManager.addEgg());
         this.game.on('reset', () => this.breakAll());
-
-        this.handleEggBreak = this.handleEggBreak.bind(this);
-        this.handleEggRemove = this.handleEggRemove.bind(this);
     }
 
     async initializeEggs() {
         try {
             let myGameSession = await GameSessionResponse.fetchMyGameSession(this.sessionId);
             for (let i = 0; i < myGameSession.availableEggs; i++) {
-                this.addEgg();
+                await this.eggManager.addEgg();
             }
         } catch (error) {
             console.error('Error fetching initial eggs:', error);
         }
-    }
-
-    addEgg() {
-        AddEggResponse.fetchAddEgg(this.sessionId).then(r => {
-                const randomX = Math.random() * (window.innerWidth - 100) + 50;
-                const egg = new Egg(this.nextId, randomX);
-
-                egg.on('explode', this.handleEggBreak);
-                egg.on('remove', this.handleEggRemove);
-
-                this.eggs.set(this.nextId, egg);
-                this.nextId++;
-            }
-        )
     }
 
     async handleEggBreak(event) {
@@ -65,7 +53,7 @@ class GameController {
         if (earnedPoints > 0) {
             const pointsElement = document.createElement('div');
             pointsElement.className = 'points';
-            const egg = this.eggs.get(event.detail.id);
+            const egg = this.eggManager.getEgg(event.detail.id);
             if (egg) {
                 pointsElement.style.left = `${egg.position.x}px`;
                 pointsElement.style.bottom = `${egg.position.y + 48}px`;
@@ -81,19 +69,15 @@ class GameController {
     }
 
     handleEggRemove(event) {
-        const {id} = event.detail;
-        this.eggs.delete(id);
+        this.eggManager.deleteEgg(event.detail.id);
     }
 
     breakAll() {
         const centerX = window.innerWidth / 2;
-        this.eggs.forEach(egg => {
-            egg.reset(centerX, window.innerHeight / 2);
-        });
+        this.eggManager.breakAll(centerX, window.innerHeight / 2);
     }
 }
 
 window.onload = () => {
-    new MissionUI();
     new GameController();
 };

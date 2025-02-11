@@ -1,20 +1,27 @@
-import {MISSION_STATUS, MISSIONS} from "./mission_constants.js";
-
+import {MISSION_STATUS} from "./mission_constants.js";
+import {MissionResponses} from "./api_mission_get_all.js";
+import {StartMission} from "./api_mission_start.js";
+import {CompleteMission} from "./api_mission_complete.js";
+import {MissionDetailResponse} from "./api_mission_get.js";
 
 export class MissionUI {
-    constructor() {
-        this.missions = MISSIONS.map(mission => ({
-            ...mission,
-            status: MISSION_STATUS.NOT_STARTED
-        }));
+    constructor(sessionId, eggManager) {
+        this.sessionId = sessionId;
         this.currentDialog = null;
         this.isDragging = false;
         this.startX = 0;
         this.scrollLeft = 0;
+        this.eggManager = eggManager;
+        this.initializeMissions().then(() => {
+            this.createMissionBar();
+            this.setupDragScroll();
+            this.createScrollIndicator();
+        })
+    }
 
-        this.createMissionBar();
-        this.setupDragScroll();
-        this.createScrollIndicator();
+    async initializeMissions() {
+        let missions = await MissionResponses.fetchMissionResponses(this.sessionId);
+        this.missions = missions.missions;
     }
 
     createMissionBar() {
@@ -28,10 +35,9 @@ export class MissionUI {
             const button = document.createElement('button');
             button.className = 'mission-button';
             button.textContent = mission.title;
-            button.onclick = (e) => {
-                // 드래그 중에는 클릭 이벤트 방지
+            button.onclick = async (e) => {
                 if (!this.isDragging) {
-                    this.showMissionDialog(mission);
+                    await this.showMissionDialog(mission);
                 }
             };
             this.missionContainer.appendChild(button);
@@ -68,26 +74,6 @@ export class MissionUI {
             this.updateScrollIndicator();
         });
 
-        // 모바일 터치 지원
-        this.missionContainer.addEventListener('touchstart', (e) => {
-            this.isDragging = true;
-            this.startX = e.touches[0].pageX - this.missionContainer.offsetLeft;
-            this.scrollLeft = this.missionContainer.scrollLeft;
-        });
-
-        this.missionContainer.addEventListener('touchend', () => {
-            this.isDragging = false;
-        });
-
-        this.missionContainer.addEventListener('touchmove', (e) => {
-            if (!this.isDragging) return;
-            const x = e.touches[0].pageX - this.missionContainer.offsetLeft;
-            const walk = (x - this.startX) * 2;
-            this.missionContainer.scrollLeft = this.scrollLeft - walk;
-            this.updateScrollIndicator();
-        });
-
-        // 스크롤 이벤트
         this.missionContainer.addEventListener('scroll', () => {
             this.updateScrollIndicator();
         });
@@ -101,9 +87,9 @@ export class MissionUI {
     }
 
     updateScrollIndicator() {
-        const totalWidth = this.missionContainer.scrollWidth;          // 전체 스크롤 가능한 너비
-        const containerWidth = this.missionContainer.clientWidth;      // 보이는 영역의 너비
-        const scrollLeft = this.missionContainer.scrollLeft;           // 현재 스크롤 위치
+        const totalWidth = this.missionContainer.scrollWidth;
+        const containerWidth = this.missionContainer.clientWidth;
+        const scrollLeft = this.missionContainer.scrollLeft;
 
         if (totalWidth <= containerWidth) {
             this.scrollIndicator.style.display = 'none';
@@ -121,7 +107,7 @@ export class MissionUI {
         this.scrollIndicator.style.transform = `translateX(${indicatorOffset}px)`;
     }
 
-    showMissionDialog(mission) {
+    async showMissionDialog(mission) {
         if (this.currentDialog) {
             document.body.removeChild(this.currentDialog);
         }
@@ -133,27 +119,31 @@ export class MissionUI {
         dialogContent.className = 'mission-content';
 
         if (mission.status === MISSION_STATUS.NOT_STARTED) {
-            this.showInitialDialog(mission, dialogContent);
+            await this.showInitialDialog(mission, dialogContent);
         } else if (mission.status === MISSION_STATUS.IN_PROGRESS) {
             this.showProgressDialog(mission, dialogContent);
         } else {
-            this.showCompletedDialog(mission, dialogContent);
+            await this.showCompletedDialog(mission, dialogContent);
         }
 
         this.currentDialog.appendChild(dialogContent);
         document.body.appendChild(this.currentDialog);
     }
 
-    showInitialDialog(mission, content) {
+    async showInitialDialog(mission, content) {
+        let missionDetail = await MissionDetailResponse.fetchMissionDetail(mission.missionId, this.sessionId);
+
         content.innerHTML = `
-            <h2>${mission.title} 상세 설명</h2>
+            <h2>${missionDetail.title}</h2>
+            <p>${missionDetail.description}</p>
             <button class="start-button">시작하기</button>
             <button class="home-button">홈으로</button>
         `;
 
-        content.querySelector('.start-button').onclick = () => {
+        content.querySelector('.start-button').onclick = async () => {
+            await StartMission.fetchMissionStart(mission.missionId, this.sessionId);
             mission.status = MISSION_STATUS.IN_PROGRESS;
-            this.showMissionDialog(mission);
+            await this.showMissionDialog(mission);
         };
 
         content.querySelector('.home-button').onclick = () => {
@@ -169,9 +159,10 @@ export class MissionUI {
             <button class="home-button">홈으로</button>
         `;
 
-        content.querySelector('.link-button').onclick = () => {
+        content.querySelector('.link-button').onclick = async () => {
+            await CompleteMission.fetchMissionComplete(mission.missionId, this.sessionId);
             mission.status = MISSION_STATUS.COMPLETED;
-            this.showMissionDialog(mission);
+            await this.showMissionDialog(mission);
         };
 
         content.querySelector('.home-button').onclick = () => {
@@ -179,16 +170,20 @@ export class MissionUI {
         };
     }
 
-    showCompletedDialog(mission, content) {
+    async showCompletedDialog(mission, content) {
         content.innerHTML = `
             <h2>${mission.title} 완료!</h2>
-            <p>보상: 알 ${mission.reward}개</p>
+            <p>보상: 알 ${mission.rewardEggCount}개</p>
             <button class="home-button">홈으로</button>
         `;
 
         content.querySelector('.home-button').onclick = () => {
             this.closeDialog();
         };
+
+        for (let i = 0; i < mission.rewardEggCount; i++) {
+            await this.eggManager.addEgg();
+        }
     }
 
     closeDialog() {
