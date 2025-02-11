@@ -13,17 +13,17 @@ import tis.service.event.EggsAcquired;
 import tis.service.event.GameSessionStarted;
 
 @Aggregate
-public class MyGameSession {
+public class GameSession {
     @AggregateIdentifier
     private String sessionId;
     private int availableEggs;
     private int availablePoints;
 
-    public MyGameSession() {
+    public GameSession() {
     }
 
     @CommandHandler
-    public MyGameSession(StartGameCommand startGameCommand) {
+    public GameSession(StartGameCommand startGameCommand) {
         AggregateLifecycle.apply(new GameSessionStarted(startGameCommand.getSessionId()));
     }
 

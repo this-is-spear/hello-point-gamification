@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import tis.service.EggService
 import tis.service.GameSessionService
-import tis.service.dto.MyGameSessionIdResponse
+import tis.service.dto.GameSessionIdResponse
 
 @RestController
 @RequestMapping("/api")
@@ -17,7 +17,7 @@ class GameController(
     private val eggService: EggService,
 ) {
     @PostMapping("/games")
-    fun startGame(): CompletableFuture<MyGameSessionIdResponse> = gameSessionService.createGameSession()
+    fun startGame(): CompletableFuture<GameSessionIdResponse> = gameSessionService.createGameSession()
 
     @GetMapping("/games")
     fun getGame(

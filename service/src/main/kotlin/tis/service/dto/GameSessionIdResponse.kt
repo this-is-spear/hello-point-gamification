@@ -1,5 +1,5 @@
 package tis.service.dto
 
-data class MyGameSessionIdResponse(
+data class GameSessionIdResponse(
     val sessionId: String,
 )

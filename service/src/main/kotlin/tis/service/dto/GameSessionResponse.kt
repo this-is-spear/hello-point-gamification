@@ -1,6 +1,6 @@
 package tis.service.dto
 
-data class MyGameSessionResponse(
+data class GameSessionResponse(
     val availableEggs: Int,
     val availablePoints: Int,
 )
