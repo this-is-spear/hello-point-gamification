@@ -82,4 +82,7 @@ https://github.com/user-attachments/assets/472fa58c-2c77-4c63-8761-f5dca10f326f
 
 ![image](https://github.com/user-attachments/assets/564d8243-5054-43b6-8d71-2b9efc7e6fd9)
 
+## 5 일차
+
+상태 변경마다 게임 정보 API를 호출하는 로직을 SSE 방식으로 전환했다.
 
