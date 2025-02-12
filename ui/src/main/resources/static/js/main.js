@@ -23,7 +23,7 @@ class GameController {
             this.handleEggRemove.bind(this)
         );
 
-        new MissionUI(this.sessionId, this.eggManager);
+        new MissionUI(this.sessionId);
         await this.setupEventListeners();
         await this.initializeEggs();
         const sseClient = new SseClient();

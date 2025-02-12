@@ -5,13 +5,12 @@ import {CompleteMission} from "./api_mission_complete.js";
 import {MissionDetailResponse} from "./api_mission_get.js";
 
 export class MissionUI {
-    constructor(sessionId, eggManager) {
+    constructor(sessionId) {
         this.sessionId = sessionId;
         this.currentDialog = null;
         this.isDragging = false;
         this.startX = 0;
         this.scrollLeft = 0;
-        this.eggManager = eggManager;
         this.initializeMissions().then(() => {
             this.createMissionBar();
             this.setupDragScroll();
