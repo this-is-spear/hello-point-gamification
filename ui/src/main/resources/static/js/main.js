@@ -4,6 +4,8 @@ import { BreakEggResponse } from "./api_egg_break.js";
 import { StartGameSessionResponse } from "./api_game_session_start.js";
 import { MissionUI } from "./mission_ui.js";
 import { EggManager } from './egg_manager.js';
+import { SseClient } from './api_sse_connect.js';
+import { AddEggResponse } from "./api_egg_add.js";
 
 class GameController {
     constructor() {
@@ -24,6 +26,8 @@ class GameController {
         new MissionUI(this.sessionId, this.eggManager);
         await this.setupEventListeners();
         await this.initializeEggs();
+        const sseClient = new SseClient();
+        sseClient.connect(this.sessionId);
     }
 
     async initializeSession() {
@@ -32,8 +36,18 @@ class GameController {
     }
 
     setupEventListeners() {
-        this.game.on('add', () => this.eggManager.addEgg());
+        this.game.on('add', () => AddEggResponse.fetchAddEgg(this.sessionId));
         this.game.on('reset', () => this.breakAll());
+        window.addEventListener('sseMessage', (event) => {
+            const data = event.detail;
+            const addEggs = data.availableEggs - this.eggManager.eggs.size;
+            for (let i = 0; i < addEggs; i++) {
+                this.eggManager.addEgg();
+            }
+
+            this.game.score = data.availablePoints;
+            this.game.updateScore();
+        });
     }
 
     async initializeEggs() {
@@ -65,7 +79,6 @@ class GameController {
                 }, 1000);
             }
         }
-        await this.game.addScore();
     }
 
     handleEggRemove(event) {

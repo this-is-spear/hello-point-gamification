@@ -180,10 +180,6 @@ export class MissionUI {
         content.querySelector('.home-button').onclick = () => {
             this.closeDialog();
         };
-
-        for (let i = 0; i < mission.rewardEggCount; i++) {
-            await this.eggManager.addEgg();
-        }
     }
 
     closeDialog() {

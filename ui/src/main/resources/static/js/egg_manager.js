@@ -1,5 +1,4 @@
-import { Egg } from './egg.js';
-import { AddEggResponse } from "./api_egg_add.js";
+import {Egg} from './egg.js';
 
 export class EggManager {
     constructor(sessionId, onEggBreak, onEggRemove) {
@@ -11,16 +10,14 @@ export class EggManager {
     }
 
     async addEgg() {
-        await AddEggResponse.fetchAddEgg(this.sessionId).then(r => {
-            const randomX = Math.random() * (window.innerWidth - 100) + 50;
-            const egg = new Egg(this.nextId, randomX);
+        const randomX = Math.random() * (window.innerWidth - 100) + 50;
+        const egg = new Egg(this.nextId, randomX);
 
-            egg.on('explode', this.handleEggBreak);
-            egg.on('remove', this.handleEggRemove);
+        egg.on('explode', this.handleEggBreak);
+        egg.on('remove', this.handleEggRemove);
 
-            this.eggs.set(this.nextId, egg);
-            this.nextId++;
-        });
+        this.eggs.set(this.nextId, egg);
+        this.nextId++;
     }
 
     getEgg(id) {

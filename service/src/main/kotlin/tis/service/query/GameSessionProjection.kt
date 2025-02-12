@@ -47,7 +47,7 @@ class GameSessionProjection(
     }
 
     @QueryHandler
-    fun getSession(query: FindOneGameQuery): GameSessionView {
+    fun query(query: FindOneGameQuery): GameSessionView {
         log.info("Getting session with id: ${query.sessionId}")
         return sessionMap[query.sessionId] ?: throw IllegalArgumentException("Session not found")
     }

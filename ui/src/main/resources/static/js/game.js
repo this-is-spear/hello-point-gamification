@@ -6,17 +6,6 @@ export class Game {
         this.score = 0;
         this.events = new EventTarget();
         this.createUI();
-        this.initializePoints();
-    }
-
-    async initializePoints() {
-        try {
-            let myGameSession = await GameSessionResponse.fetchMyGameSession(this.sessionId);
-            this.score = myGameSession.availablePoints
-            this.updateScore(this.score);
-        } catch (error) {
-            console.error('Error fetching points:', error);
-        }
     }
 
     on(eventName, handler) {
@@ -29,13 +18,11 @@ export class Game {
     }
 
     createUI() {
-        // 점수 표시
         this.scoreElement = document.createElement('div');
         this.scoreElement.className = 'score';
         this.updateScore();
         document.body.appendChild(this.scoreElement);
 
-        // 컨트롤 버튼
         const controls = document.createElement('div');
         controls.className = 'controls';
 
@@ -56,9 +43,5 @@ export class Game {
 
     updateScore() {
         this.scoreElement.textContent = `Score: ${this.score}`;
-    }
-
-    async addScore() {
-        await this.initializePoints()
     }
 }

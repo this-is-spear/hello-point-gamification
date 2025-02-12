@@ -11,6 +11,7 @@ import tis.core.StartGameCommand;
 import tis.service.event.EggBroken;
 import tis.service.event.EggsAcquired;
 import tis.service.event.GameSessionStarted;
+import tis.service.event.GameSessionUpdated;
 
 @Aggregate
 public class GameSession {
@@ -49,11 +50,13 @@ public class GameSession {
         sessionId = event.getSessionId();
         availableEggs--;
         availablePoints += event.getEarnedPoints();
+        AggregateLifecycle.apply(new GameSessionUpdated(sessionId, availableEggs, availablePoints));
     }
 
     @EventSourcingHandler
     public void on(EggsAcquired event) {
         sessionId = event.getSessionId();
         availableEggs += event.getAcquireEggs();
+        AggregateLifecycle.apply(new GameSessionUpdated(sessionId, availableEggs, availablePoints));
     }
 }
