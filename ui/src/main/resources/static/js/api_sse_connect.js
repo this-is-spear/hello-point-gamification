@@ -1,8 +1,4 @@
 export class SseClient {
-    constructor() {
-        this.eventSource = new EventSource('/api/sse/connect');
-    }
-
     connect(sessionId) {
         if (this.eventSource) {
             this.disconnect();
