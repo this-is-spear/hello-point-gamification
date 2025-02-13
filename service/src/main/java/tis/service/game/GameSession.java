@@ -1,4 +1,4 @@
-package tis.service.command;
+package tis.service.game;
 
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;

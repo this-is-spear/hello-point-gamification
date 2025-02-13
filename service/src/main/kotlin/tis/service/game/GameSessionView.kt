@@ -1,4 +1,4 @@
-package tis.service.query
+package tis.service.game
 
 class GameSessionView(
     val sessionId: String,

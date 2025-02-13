@@ -1,7 +1,7 @@
 package tis.ui
 
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
-import tis.service.session.MessageSender
+import tis.service.game.MessageSender
 
 class SseMessageSender(
     private val sseEmitter: SseEmitter,

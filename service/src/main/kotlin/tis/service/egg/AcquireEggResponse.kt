@@ -1,4 +1,4 @@
-package tis.service.dto
+package tis.service.egg
 
 data class AcquireEggResponse(
     val acquireEggs: Int,

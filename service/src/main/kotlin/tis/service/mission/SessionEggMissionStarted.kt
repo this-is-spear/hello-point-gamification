@@ -1,7 +1,5 @@
 package tis.service.mission
 
-import tis.service.command.MissionStatus
-
 class SessionEggMissionStarted(
     val sessionMissionId: String,
     val sessionId: String,

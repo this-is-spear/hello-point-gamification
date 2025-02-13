@@ -1,7 +1,5 @@
 package tis.service.mission
 
-import tis.service.command.MissionStatus
-
 class SessionEggMissionView(
     val sessionMissionId: String,
     val title: String,

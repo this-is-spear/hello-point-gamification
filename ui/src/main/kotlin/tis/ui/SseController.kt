@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
-import tis.service.session.MessageSenderService
+import tis.service.game.MessageSenderService
 
 @RestController
 @RequestMapping("/api/sse")

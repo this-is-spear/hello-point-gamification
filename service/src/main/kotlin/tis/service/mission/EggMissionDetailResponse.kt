@@ -1,7 +1,5 @@
 package tis.service.mission
 
-import tis.service.command.MissionStatus
-
 class EggMissionDetailResponse(
     val missionId: String,
     val status: MissionStatus,

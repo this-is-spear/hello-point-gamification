@@ -1,4 +1,4 @@
-package tis.service.query
+package tis.service.game
 
 import org.axonframework.eventhandling.EventHandler
 import org.axonframework.queryhandling.QueryHandler

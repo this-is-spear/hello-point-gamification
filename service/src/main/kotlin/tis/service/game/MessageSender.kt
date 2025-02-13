@@ -1,4 +1,4 @@
-package tis.service.session
+package tis.service.game
 
 interface MessageSender {
     fun send(message: String)

@@ -7,9 +7,9 @@ import org.axonframework.queryhandling.QueryGateway
 import org.springframework.stereotype.Service
 import tis.core.FindOneGameQuery
 import tis.core.StartGameCommand
-import tis.service.dto.GameSessionIdResponse
-import tis.service.dto.GameSessionResponse
-import tis.service.query.GameSessionView
+import tis.service.game.GameSessionIdResponse
+import tis.service.game.GameSessionResponse
+import tis.service.game.GameSessionView
 
 @Service
 class GameSessionService(

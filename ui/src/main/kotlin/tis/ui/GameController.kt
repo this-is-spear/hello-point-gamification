@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import tis.service.EggService
 import tis.service.GameSessionService
-import tis.service.dto.GameSessionIdResponse
+import tis.service.game.GameSessionIdResponse
 
 @RestController
 @RequestMapping("/api")

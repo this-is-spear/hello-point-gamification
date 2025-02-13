@@ -1,10 +1,9 @@
-package tis.service.session
+package tis.service.game
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.axonframework.eventhandling.EventHandler
 import org.springframework.stereotype.Service
-import tis.service.dto.GameSessionResponse
 import tis.service.event.GameSessionUpdated
 
 @Service

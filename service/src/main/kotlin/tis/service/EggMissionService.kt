@@ -10,7 +10,7 @@ import tis.core.CompleteSessionMissionCommand
 import tis.core.FindAllSessionMissionQuery
 import tis.core.FindOneSessionMissionQuery
 import tis.core.StartSessionMissionCommand
-import tis.service.command.MissionStatus
+import tis.service.mission.MissionStatus
 import tis.service.mission.EggMissionDetailResponse
 import tis.service.mission.EggMissionRepository
 import tis.service.mission.EggMissionResponse

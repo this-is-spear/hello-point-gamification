@@ -1,4 +1,4 @@
-package tis.service.command;
+package tis.service.mission;
 
 public enum MissionStatus {
     NOT_STARTED,

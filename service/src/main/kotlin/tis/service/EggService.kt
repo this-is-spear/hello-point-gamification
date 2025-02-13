@@ -6,8 +6,8 @@ import org.axonframework.commandhandling.gateway.CommandGateway
 import org.springframework.stereotype.Service
 import tis.core.AcquireEggCommand
 import tis.core.BreakEggsCommand
-import tis.service.dto.AcquireEggResponse
-import tis.service.dto.BreakEggResponse
+import tis.service.egg.AcquireEggResponse
+import tis.service.egg.BreakEggResponse
 
 @Service
 class EggService(

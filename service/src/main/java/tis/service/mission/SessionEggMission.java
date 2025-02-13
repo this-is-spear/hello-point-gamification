@@ -1,4 +1,4 @@
-package tis.service.command;
+package tis.service.mission;
 
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
@@ -8,8 +8,6 @@ import org.axonframework.spring.stereotype.Aggregate;
 import tis.core.CompleteSessionMissionCommand;
 import tis.core.StartSessionMissionCommand;
 import tis.service.event.EggsAcquired;
-import tis.service.mission.SessionEggMissionCompleted;
-import tis.service.mission.SessionEggMissionStarted;
 
 @Aggregate
 public class SessionEggMission {
