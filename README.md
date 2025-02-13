@@ -86,3 +86,36 @@ https://github.com/user-attachments/assets/472fa58c-2c77-4c63-8761-f5dca10f326f
 
 상태 변경마다 게임 정보 API를 호출하는 로직을 SSE 방식으로 전환했다.
 
+다른 모듈 간 상태를 호출해야 하는 문제가 있다. `미션 보상 후 알 적립`, `알 깨기 후 포인트 적립` 기능은 다른 모듈 정보에 접근해서 상태 변경 코드를 호출해야 했다.
+
+- Mission : 미션 정보가 포함된다.
+- Egg : 알 정보가 포함된다.
+- Point : 포인트 정보가 포함된다.
+
+두 클래스 간 결합력이 생기게 된다.
+
+|알 깨기 후 포인트 적립 상황|미션 완료 후 알 적립 상황|
+|---|---|
+|![image](https://github.com/user-attachments/assets/32488ebb-ecf8-45c6-b107-3ca8d5d9f99c)|![image](https://github.com/user-attachments/assets/bb53d9f5-f5c8-4a9d-9a9d-e63905b26cc5)|
+
+`미션 클래스`와 `알 클래스`가 연결되면서 자바스크립트가 실행 흐름을 가지게 됐다고 판단했다.
+실행 흐름은 클래스간 결합력을 만들어낸다. 결합력이 많아지면 코드 관리가 어려워진다. 그래서 SSE를 이용해 상태 변경을 외부로 추출했다.
+
+사례로 `미션 보상 후 알 적립` 과정을 가져왔다. 이전에는 미션에서 알 상태 변화를 알려줘야 했고 그로 인해 결합력이 생겼던 문제를 해결했다.
+
+|AS-IS|TO-BE|
+|---|---|
+|![image](https://github.com/user-attachments/assets/881375ef-6ef0-4b9d-ba68-01b6ff2e1785)|![image](https://github.com/user-attachments/assets/9b6996a5-5037-437d-b7fa-78f940169b0f)|
+
+전체 결합도를 해소한 과정이다.
+
+|AS-IS|TO-BE|
+|---|---|
+|![image](https://github.com/user-attachments/assets/1e03fae3-8a29-4a2b-bb6d-afaf5e19b2e5)|![image](https://github.com/user-attachments/assets/d7306cd4-07d0-44e4-bcc6-11b7c990f9f9)|
+
+앞으로 `포인트 사용 기능`, `미션에서 알 적립이 아닌 포인트 적립이 가능하도록 변경`하는 등의 동작에 쉽게 대응 가능해 보인다.
+
+`미션 후 알 적립` 기능을 구현했다면 이후에 `미션 후 포인트 적립`은 어떻게 대응하지? 고민을 했다.
+결합력으로 인해 실행 흐름이 하드 코딩 돼 있다면 시간 흐름에 따라 변경이 어려워질 수 있음을 경험했다.
+
+결합력 제거 또는 책임 분리는 `연관 없는 기능 연결로 인해 코드가 복잡해지는 상황을 예방`하기 위함임을 경험한 하루다.
