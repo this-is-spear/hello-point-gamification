@@ -22,7 +22,7 @@ export class SseClient {
 
         this.eventSource.onerror = (error) => {
             this.disconnect();
-            setTimeout(() => this.connect(sessionId), 3000);
+            setTimeout(() => this.connect(sessionId), 25000);
         };
     }
 
