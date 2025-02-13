@@ -1,6 +1,6 @@
 export class StartMission {
     static async fetchMissionStart(missionId, sessionId) {
-        const response = await fetch(`/api/missions/${missionId}/complete?sessionId=${sessionId}`, {
+        const response = await fetch(`/api/missions/${missionId}/start?sessionId=${sessionId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

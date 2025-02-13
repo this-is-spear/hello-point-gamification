@@ -1,0 +1,7 @@
+### CREATE MISSION 1
+
+POST http://localhost:8080/api/internal/missions?title=Mission%201&description=Just%20click%20button&rewardEggCount=2
+
+### CREATE MISSION 2
+
+POST http://localhost:8080/api/internal/missions?title=Mission%202&description=Just%20click%20button&rewardEggCount=4

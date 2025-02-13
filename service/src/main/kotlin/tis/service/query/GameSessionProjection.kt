@@ -6,8 +6,8 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 import tis.core.FindOneGameQuery
-import tis.service.event.EggsAcquired
 import tis.service.event.EggBroken
+import tis.service.event.EggsAcquired
 import tis.service.event.GameSessionStarted
 
 @Repository
